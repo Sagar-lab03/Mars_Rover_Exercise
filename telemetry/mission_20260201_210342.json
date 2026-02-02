@@ -1,0 +1,168 @@
+{
+  "mission_name": "Mars Exploration Mission Alpha",
+  "start_time": "2026-02-01T21:03:42.952147",
+  "end_time": "2026-02-01T21:04:15.307414",
+  "final_status": {
+    "position": {
+      "x": 0,
+      "y": 2
+    },
+    "direction": "West",
+    "commands_executed": 7,
+    "cells_visited": 3
+  },
+  "path_history": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ]
+  ],
+  "events": [
+    {
+      "timestamp": "2026-02-01T21:03:42.952147",
+      "type": "mission_start",
+      "data": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "direction": "North",
+        "commands_executed": 0,
+        "cells_visited": 1
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.209064",
+      "type": "command",
+      "data": {
+        "command": "R",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "direction": "East",
+          "commands_executed": 1,
+          "cells_visited": 1
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.229064",
+      "type": "command",
+      "data": {
+        "command": "L",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "direction": "North",
+          "commands_executed": 2,
+          "cells_visited": 1
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.247077",
+      "type": "command",
+      "data": {
+        "command": "M",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "direction": "North",
+          "commands_executed": 3,
+          "cells_visited": 2
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.259053",
+      "type": "command",
+      "data": {
+        "command": "M",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "direction": "North",
+          "commands_executed": 4,
+          "cells_visited": 3
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.270054",
+      "type": "command",
+      "data": {
+        "command": "R",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "direction": "East",
+          "commands_executed": 5,
+          "cells_visited": 3
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.280658",
+      "type": "command",
+      "data": {
+        "command": "R",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "direction": "South",
+          "commands_executed": 6,
+          "cells_visited": 3
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.291657",
+      "type": "command",
+      "data": {
+        "command": "R",
+        "status": {
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "direction": "West",
+          "commands_executed": 7,
+          "cells_visited": 3
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-01T21:04:15.307414",
+      "type": "mission_end",
+      "data": {
+        "position": {
+          "x": 0,
+          "y": 2
+        },
+        "direction": "West",
+        "commands_executed": 7,
+        "cells_visited": 3
+      }
+    }
+  ]
+}
