@@ -55,7 +55,8 @@ _session: dict = {}   # mirrors the terminal telemetry JSON format exactly
 
 
 # ── Environmental Sensor Simulator ──────────────────────────────────────────
-from sensor_simulator import SensorSimulator  # noqa: E402
+from sensor_simulator import SensorSimulator          # noqa: E402
+from planners.science_engine import score_cell        # noqa: E402
 
 
 _current_sensors: dict = {}   # latest reading — updated after every action
@@ -976,7 +977,67 @@ def batch_template():
     )
 
 
+
+
+# ── Science Heatmap Route ─────────────────────────────────────────────────────
+
+@app.route("/api/science/heatmap", methods=["GET"])
+def science_heatmap():
+    """
+    Return science scores for every traversable cell on the grid.
+
+    Query param: ?profile=balanced (default) | geology | ice | speed
+
+    Response: {
+      "cells": { "x,y": { "score": 0-100, "tier": "high|medium|low|none", "reason": str } },
+      "max_score": int,
+      "profile": str
+    }
+    """
+    profile = request.args.get("profile", "balanced")
+    visited = set(map(tuple, rover.path_history))
+
+    cells = {}
+    max_score = 0
+
+    for x in range(rover.grid.width):
+        for y in range(rover.grid.height):
+            if rover.grid.has_obstacle(x, y):
+                continue
+            if (x, y) in visited:
+                # Visited cells still get scored so the gradient updates live
+                sv, reasons = score_cell(x, y, rover, mission, profile)
+                sv = max(0, sv - 20)   # slight dimming for already-visited cells
+            else:
+                sv, reasons = score_cell(x, y, rover, mission, profile)
+
+            if sv > max_score:
+                max_score = sv
+
+            if sv >= 60:
+                tier = "high"
+            elif sv >= 35:
+                tier = "medium"
+            elif sv >= 10:
+                tier = "low"
+            else:
+                tier = "none"
+
+            cells[f"{x},{y}"] = {
+                "score":  sv,
+                "tier":   tier,
+                "reason": reasons[0] if reasons else "",
+            }
+
+    return jsonify({
+        "cells":     cells,
+        "max_score": max_score,
+        "profile":   profile,
+    })
+
+
 # ── Startup ───────────────────────────────────────────────────────────────────
+
 
 if __name__ == "__main__":
     config = load_config()

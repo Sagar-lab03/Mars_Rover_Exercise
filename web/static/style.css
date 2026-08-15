@@ -2257,3 +2257,105 @@ body {
 .profile-selector-row.profile-active-energy_saving .profile-row-label { color: #4ade80; }
 .profile-selector-row.profile-active-hazard_mapping .profile-row-label { color: #f87171; }
 .profile-selector-row.profile-active-balanced    .profile-row-label { color: #38bdf8; }
+
+/* ══════════════════════════════════════════════════════════════
+   SCIENCE HEATMAP OVERLAY
+   ══════════════════════════════════════════════════════════════ */
+
+/* Grid panel header: title + right-side controls */
+.grid-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Heatmap toggle button */
+.btn-heatmap {
+  padding: 4px 12px;
+  background: rgba(232, 121, 249, 0.07);
+  border: 1px solid rgba(232, 121, 249, 0.35);
+  border-radius: var(--radius-sm, 4px);
+  color: #c084fc;
+  font-family: var(--font-display, 'Orbitron', sans-serif);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn-heatmap:hover {
+  background: rgba(232, 121, 249, 0.18);
+  border-color: #e879f9;
+  color: #e879f9;
+}
+.btn-heatmap.active {
+  background: rgba(232, 121, 249, 0.22);
+  border-color: #e879f9;
+  color: #e879f9;
+  box-shadow: 0 0 8px rgba(232, 121, 249, 0.4);
+}
+
+/* Heatmap legend dots */
+.legend-dot.heatmap-high    { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
+.legend-dot.heatmap-med     { background: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
+.legend-dot.heatmap-low     { background: #22d3ee; box-shadow: 0 0 4px #22d3ee; }
+.legend-dot.heatmap-none    { background: #1e3054; border: 1px solid #2a4a7f; }
+.legend-dot.heatmap-visited { background: #6b7280; }
+
+/* ── Cell overlay classes applied by JS ───────────────────────────────────── */
+
+/* Shared transition so the overlay appears smoothly */
+.cell { transition: outline 0.15s ease; }
+
+/* High science value — red glow */
+.hm-high {
+  background: rgba(239, 68, 68, 0.22) !important;
+  outline: 1px solid rgba(239, 68, 68, 0.55) !important;
+  outline-offset: -1px;
+}
+
+/* Medium science value — amber */
+.hm-med {
+  background: rgba(245, 158, 11, 0.18) !important;
+  outline: 1px solid rgba(245, 158, 11, 0.45) !important;
+  outline-offset: -1px;
+}
+
+/* Low science value — cyan */
+.hm-low {
+  background: rgba(34, 211, 238, 0.12) !important;
+  outline: 1px solid rgba(34, 211, 238, 0.3) !important;
+  outline-offset: -1px;
+}
+
+/* No science value — very subtle */
+.hm-none {
+  background: rgba(15, 26, 46, 0.6) !important;
+}
+
+/* Visited cell dimming */
+.hm-visited {
+  opacity: 0.55;
+  filter: saturate(0.4);
+}
+
+/* Score badge shown inside each cell when heatmap is on */
+.hm-score {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.hm-high  .hm-score { color: #fca5a5; }
+.hm-med   .hm-score { color: #fcd34d; }
+.hm-low   .hm-score { color: #67e8f9; }
+.hm-none  .hm-score { color: #374151; }
+
+/* Ensure cells are position-relative for the score badge */
+.cell { position: relative; }
