@@ -447,8 +447,12 @@ function render(state) {
   updateSensors(state);
   setStatus(true);
 
+  // Refresh heatmap overlay after every state change (no-op when inactive)
+  refreshHeatmap();
+
   if (state.error) showError(state.error);
 }
+
 
 // ── API actions ───────────────────────────────────────────────────────────
 
@@ -1214,3 +1218,138 @@ function appendAeLog(text, forceClass) {
   log.appendChild(line);
   log.scrollTop = log.scrollHeight;
 }
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCIENCE HEATMAP ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+let _heatmapActive  = false;
+let _heatmapData    = null;   // last fetched { cells, max_score, profile }
+
+/**
+ * Toggle the science heatmap overlay on/off.
+ * Fetches fresh data from /api/science/heatmap using the currently
+ * active mission profile (reads from the Auto-Explore profile selector
+ * if available, falls back to "balanced").
+ */
+async function toggleHeatmap() {
+  const btn = document.getElementById("btn-heatmap");
+  if (_heatmapActive) {
+    // Turn OFF
+    _heatmapActive = false;
+    clearHeatmap();
+    btn.classList.remove("active");
+    document.getElementById("legend-terrain").classList.remove("hidden");
+    document.getElementById("legend-heatmap").classList.add("hidden");
+    return;
+  }
+
+  // Detect active profile from the Auto-Explore panel (if rendered)
+  const profileSel = document.getElementById("ae-profile");
+  const profile    = profileSel ? profileSel.value : "balanced";
+
+  btn.textContent  = "◆ LOADING…";
+  btn.disabled     = true;
+
+  try {
+    const res  = await fetch(`/api/science/heatmap?profile=${profile}`);
+    _heatmapData = await res.json();
+  } catch (e) {
+    btn.textContent = "◆ SCIENCE HEATMAP";
+    btn.disabled    = false;
+    return;
+  }
+
+  btn.textContent = "◆ SCIENCE HEATMAP";
+  btn.disabled    = false;
+
+  _heatmapActive = true;
+  btn.classList.add("active");
+  document.getElementById("legend-terrain").classList.add("hidden");
+  document.getElementById("legend-heatmap").classList.remove("hidden");
+
+  applyHeatmap(_heatmapData);
+}
+
+/**
+ * Apply heatmap overlays to every cell on the grid.
+ * @param {object} data  — response from /api/science/heatmap
+ */
+function applyHeatmap(data) {
+  if (!data || !data.cells) return;
+
+  // Clear any previous overlay classes first
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.classList.remove("hm-high", "hm-med", "hm-low", "hm-none", "hm-visited");
+    const badge = cell.querySelector(".hm-score");
+    if (badge) badge.remove();
+  });
+
+  const cells    = data.cells;
+  const maxScore = data.max_score || 1;
+
+  for (const [key, info] of Object.entries(cells)) {
+    const [x, y] = key.split(",").map(Number);
+    const cell   = document.getElementById(`cell-${x}-${y}`);
+    if (!cell) continue;
+
+    // Skip rover cell and obstacle cells — don't overlay them
+    if (cell.classList.contains("rover-cell") || cell.classList.contains("obstacle")) continue;
+
+    // Tier class
+    const tierClass = {
+      high:   "hm-high",
+      medium: "hm-med",
+      low:    "hm-low",
+      none:   "hm-none",
+    }[info.tier] || "hm-none";
+
+    cell.classList.add(tierClass);
+
+    // Dim visited cells
+    if (cell.classList.contains("visited")) {
+      cell.classList.add("hm-visited");
+    }
+
+    // Score badge (only for high/med cells to avoid clutter)
+    if (info.score >= 10) {
+      const badge = document.createElement("span");
+      badge.className   = "hm-score";
+      badge.textContent = info.score;
+      badge.title       = info.reason || "";
+      cell.appendChild(badge);
+    }
+  }
+}
+
+/** Strip all heatmap overlay classes from every cell. */
+function clearHeatmap() {
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.classList.remove("hm-high", "hm-med", "hm-low", "hm-none", "hm-visited");
+    const badge = cell.querySelector(".hm-score");
+    if (badge) badge.remove();
+  });
+  _heatmapData = null;
+}
+
+/**
+ * Refresh the heatmap after each rover action (called from render()).
+ * Only fires when heatmap is active; re-fetches fresh scores so visited
+ * cell dimming and score changes are reflected immediately.
+ */
+async function refreshHeatmap() {
+  if (!_heatmapActive) return;
+
+  const profileSel = document.getElementById("ae-profile");
+  const profile    = profileSel ? profileSel.value : "balanced";
+
+  try {
+    const res = await fetch(`/api/science/heatmap?profile=${profile}`);
+    _heatmapData = await res.json();
+    applyHeatmap(_heatmapData);
+  } catch (_) {
+    /* silent fail — grid still shows last overlay */
+  }
+}
+

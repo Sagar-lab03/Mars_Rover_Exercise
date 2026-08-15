@@ -43,20 +43,36 @@
     <section class="panel panel-grid" aria-label="Mars Surface Grid">
       <div class="panel-header">
         <span class="panel-title">MARS SURFACE</span>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-dot rover-color"></span>Rover</span>
-          <span class="legend-item"><span class="legend-dot obstacle-color"></span>Obstacle</span>
-          <span class="legend-item"><span class="legend-dot waypoint-color"></span>Waypoint</span>
-          <span class="legend-item"><span class="legend-dot reached-color"></span>Reached</span>
-          <span class="legend-item"><span class="legend-dot sand-color"></span>Sand</span>
-          <span class="legend-item"><span class="legend-dot rock-color"></span>Rock</span>
-          <span class="legend-item"><span class="legend-dot ice-color"></span>Ice</span>
+        <div class="grid-header-right">
+          <!-- Heatmap toggle -->
+          <button class="btn-heatmap" id="btn-heatmap" onclick="toggleHeatmap()" title="Toggle Science Heatmap">
+            &#9670; SCIENCE HEATMAP
+          </button>
+          <!-- Terrain legend (default) -->
+          <div class="legend" id="legend-terrain">
+            <span class="legend-item"><span class="legend-dot rover-color"></span>Rover</span>
+            <span class="legend-item"><span class="legend-dot obstacle-color"></span>Obstacle</span>
+            <span class="legend-item"><span class="legend-dot waypoint-color"></span>Waypoint</span>
+            <span class="legend-item"><span class="legend-dot reached-color"></span>Reached</span>
+            <span class="legend-item"><span class="legend-dot sand-color"></span>Sand</span>
+            <span class="legend-item"><span class="legend-dot rock-color"></span>Rock</span>
+            <span class="legend-item"><span class="legend-dot ice-color"></span>Ice</span>
+          </div>
+          <!-- Heatmap legend (shown when heatmap is active) -->
+          <div class="legend hidden" id="legend-heatmap">
+            <span class="legend-item"><span class="legend-dot heatmap-high"></span>High (60+)</span>
+            <span class="legend-item"><span class="legend-dot heatmap-med"></span>Med (35+)</span>
+            <span class="legend-item"><span class="legend-dot heatmap-low"></span>Low (10+)</span>
+            <span class="legend-item"><span class="legend-dot heatmap-none"></span>None</span>
+            <span class="legend-item"><span class="legend-dot heatmap-visited"></span>Visited</span>
+          </div>
         </div>
       </div>
       <div class="grid-wrapper">
         <div id="rover-grid" class="rover-grid" role="grid" aria-label="Rover navigation grid"></div>
       </div>
     </section>
+
 
     <!-- ─── RIGHT: PANELS ──────────────────────────────────────────────── -->
     <aside class="sidebar">
